@@ -8,6 +8,7 @@ Use:
 local LibFeedback = LibStub:GetLibrary('LibFeedback')
 LibFeedback:initializeFeedbackWindow(ExampleAddonNameSpace, -- namespace of the addon
 "Example Addon", -- The title string for the feedback window and the mails it sends
+parentControl, -- The parent control to anchor the feedback button(s) + label(s) to
 "@AddonAuthor", -- The destination for feedback (0 gold attachment) and donation mails
 {TOPLEFT , owningWindow , TOPLEFT , 10, 10}, -- The position of the mail button icon. 
 					     -- The button is returned so you can modify the button if needed
@@ -25,7 +26,7 @@ LibFeedback:initializeFeedbackWindow(ExampleAddonNameSpace, -- namespace of the 
 
 
 local libLoaded
-local LIB_NAME, VERSION = "LibFeedback", 1.0
+local LIB_NAME, VERSION = "LibFeedback", 1.1
 local LibFeedback, oldminor = LibStub:NewLibrary(LIB_NAME, VERSION)
 if not LibFeedback then return end
 
@@ -94,6 +95,18 @@ local function createFeedbackWindow(owningWindow, messageText)
 end
 
 function LibFeedback:initializeFeedbackWindow(parentAddonNameSpace, parentAddonName, parentControl, mailDestination,  mailButtonPosition, buttonInfo,  messageText)
+	if parentAddonNameSpace == nil or parentAddonNameSpace == "" then
+		d("|cFF0000[LibFeedback] - ERROR:|r Obligatory addon namespace is missing!")
+		return nil
+	end
+	if parentControl == nil or parentControl.GetName == nil then
+		d("|cFF0000[LibFeedback] - ERROR:|r Parent control not found for addon namespace: \"|cFFFFFF" .. tostring(parentAddonNameSpace) .. "|r\"")
+		return nil
+	end
+	if mailButtonPosition == nil or mailButtonPosition[2] == nil then
+		d("|cFF0000[LibFeedback] - ERROR:|r Mail button data is missing for addon namespace: \"|cFFFFFF" .. tostring(parentAddonNameSpace) .. "|r\"")
+		return nil
+	end
 
 	local feedbackWindow = createFeedbackWindow(parentControl, messageText)
 
